@@ -57,6 +57,7 @@
 	},
 	"dependencies": {
 		"@auth/sveltekit": "^1.11.1",
+		"@ericblade/quagga2": "^1.12.1",
 		"postgres": "^3.4.8"
 	}
 }
