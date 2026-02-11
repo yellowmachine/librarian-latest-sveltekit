@@ -1,11 +1,13 @@
 import { redirect, type Handle } from '@sveltejs/kit';
 import { validateSession } from '$lib/server/auth';
+import { withUser } from '$lib/server/db';
+import { db } from '$lib/server/db';
 // import { paraglideMiddleware } from '$lib/paraglide/server'; // Descomentar cuando uses i18n
 import { sequence } from '@sveltejs/kit/hooks';
 
 /**
  * Handle de autenticación
- * Valida la sesión del usuario en cada request
+ * Valida la sesión del usuario en cada request y configura helpers de DB
  */
 const authenticationHandle: Handle = async ({ event, resolve }) => {
   // Obtener el token de sesión de las cookies
@@ -17,10 +19,27 @@ const authenticationHandle: Handle = async ({ event, resolve }) => {
     if (result) {
       // Sesión válida, agregar usuario a locals
       event.locals.user = result.user;
+
+      // Configurar helper de DB con RLS automático
+      event.locals.db = {
+        query: async (callback) => {
+          return withUser(result.user.id, callback);
+        }
+      };
     } else {
       // Sesión inválida o expirada, eliminar cookie
       event.cookies.delete('session', { path: '/' });
     }
+  }
+
+  // Si no hay usuario autenticado, proveer db sin RLS
+  // (para endpoints públicos que no necesitan autenticación)
+  if (!event.locals.db) {
+    event.locals.db = {
+      query: async (callback) => {
+        return callback(db);
+      }
+    };
   }
 
   return resolve(event);

@@ -41,7 +41,6 @@ export const handle: Handle = async ({ event, resolve }) => {
 // src/routes/api/books/+server.ts
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
-import { withUser } from '$lib/server/db';
 import { books } from '$lib/server/db/schema';
 
 export const GET: RequestHandler = async ({ locals }) => {
@@ -50,14 +49,17 @@ export const GET: RequestHandler = async ({ locals }) => {
     return json({ error: 'No autenticado' }, { status: 401 });
   }
 
-  // Con withUser(), RLS se encarga de filtrar automáticamente
-  const myBooks = await withUser(locals.user.id, async (tx) => {
+  // RLS automático usando locals.db.query()
+  const myBooks = await locals.db.query((tx) => {
     return tx.select().from(books);
   });
 
   return json({ books: myBooks });
 };
 ```
+
+**💡 Nota:** Ahora usamos `locals.db.query()` en lugar de `withUser()`.
+El `userId` ya está capturado en `hooks.server.ts`. Ver `PATRON_DB_LOCALS.md` para más info.
 
 ## ➕ Ejemplo 2: Crear un libro
 
