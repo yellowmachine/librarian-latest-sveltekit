@@ -1,0 +1,27 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1771504532128,
+      "tag": "0000_stale_carnage",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1771504553935,
+      "tag": "0001_mature_callisto",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1771504617104,
+      "tag": "0002_cultured_namora",
+      "breakpoints": true
+    }
+  ]
+}

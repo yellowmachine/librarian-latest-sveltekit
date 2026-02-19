@@ -13,11 +13,6 @@ export const loanStatusEnum = pgEnum('loan_status', [
   'returned'
 ]);
 
-export const contactStatusEnum = pgEnum('contact_status', [
-  'pending',
-  'accepted',
-  'blocked'
-]);
 
 // ============================================================================
 // TABLES CON RLS INTEGRADO
@@ -30,6 +25,7 @@ export const users = pgTable('users', {
   id: uuid('id').primaryKey().defaultRandom(),
   email: text('email').notNull().unique(),
   name: text('name').notNull(),
+  nick: text('nick').notNull().unique(),
   passwordHash: text('password_hash').notNull(),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
@@ -72,46 +68,6 @@ export const sessions = pgTable('sessions', {
   }),
 ]);
 
-/**
- * Contacts table (user-to-user relationships)
- * Permite gestionar contactos entre usuarios para préstamos
- */
-export const contacts = pgTable('contacts', {
-  userId: uuid('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
-  contactId: uuid('contact_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
-  status: contactStatusEnum('status').default('pending').notNull(),
-  createdAt: timestamp('created_at').defaultNow().notNull(),
-}, (table) => [
-  primaryKey({ columns: [table.userId, table.contactId] }),
-  index('contacts_user_idx').on(table.userId),
-  index('contacts_contact_idx').on(table.contactId),
-  index('contacts_status_idx').on(table.status),
-  // RLS Policies
-  pgPolicy('contacts_select_own', {
-    for: 'select',
-    to: 'PUBLIC',
-    using: sql`${table.userId} = current_setting('app.user_id', true)::uuid OR ${table.contactId} = current_setting('app.user_id', true)::uuid`,
-  }),
-  pgPolicy('contacts_insert_own', {
-    for: 'insert',
-    to: 'PUBLIC',
-    withCheck: sql`
-      ${table.userId} = current_setting('app.user_id', true)::uuid AND
-      ${table.contactId} != current_setting('app.user_id', true)::uuid
-    `,
-  }),
-  pgPolicy('contacts_update_own', {
-    for: 'update',
-    to: 'PUBLIC',
-    using: sql`${table.contactId} = current_setting('app.user_id', true)::uuid AND ${table.status} = 'pending'`,
-    withCheck: sql`${table.status} IN ('accepted', 'blocked')`,
-  }),
-  pgPolicy('contacts_delete_own', {
-    for: 'delete',
-    to: 'PUBLIC',
-    using: sql`${table.userId} = current_setting('app.user_id', true)::uuid OR ${table.contactId} = current_setting('app.user_id', true)::uuid`,
-  }),
-]);
 
 /**
  * Groups table
@@ -335,22 +291,7 @@ export const bookTags = pgTable('book_tags', {
       ${table.bookId} IN (SELECT id FROM books WHERE owner_id = current_setting('app.user_id', true)::uuid)
     `,
   }),
-  pgPolicy('book_tags_insert_group_books', {
-    for: 'insert',
-    to: 'PUBLIC',
-    withCheck: sql`
-      ${table.taggedById} = current_setting('app.user_id', true)::uuid AND
-      ${table.bookId} IN (
-        SELECT b.id FROM books b
-        WHERE b.owner_id IN (
-          SELECT ug.user_id FROM user_groups ug
-          WHERE ug.group_id IN (
-            SELECT group_id FROM user_groups WHERE user_id = current_setting('app.user_id', true)::uuid
-          )
-        )
-      )
-    `,
-  }),
+
   pgPolicy('book_tags_delete_own', {
     for: 'delete',
     to: 'PUBLIC',
@@ -436,15 +377,6 @@ export const bookLoans = pgTable('book_loans', {
       ${table.requesterId} = current_setting('app.user_id', true)::uuid AND
       ${table.ownerId} != current_setting('app.user_id', true)::uuid AND
       ${table.status} = 'pending' AND
-      -- Validar que sean contactos aceptados
-      EXISTS (
-        SELECT 1 FROM contacts c
-        WHERE (
-          (c.user_id = current_setting('app.user_id', true)::uuid AND c.contact_id = ${table.ownerId})
-          OR (c.user_id = ${table.ownerId} AND c.contact_id = current_setting('app.user_id', true)::uuid)
-        )
-        AND c.status = 'accepted'
-      ) AND
       -- Validar que el libro tenga una etiqueta compartida en un grupo común
       ${table.bookId} IN (
         SELECT bt.book_id FROM book_tags bt
@@ -518,8 +450,7 @@ export const usersRelations = relations(users, ({ many }) => ({
   receivedLoanRequests: many(bookLoans, { relationName: 'owner' }),
   createdGroups: many(groups),
   sharedTags: many(sharedTagsToGroups),
-  initiatedContacts: many(contacts, { relationName: 'user' }),
-  receivedContacts: many(contacts, { relationName: 'contact' }),
+
 }));
 
 export const sessionsRelations = relations(sessions, ({ one }) => ({
@@ -529,18 +460,6 @@ export const sessionsRelations = relations(sessions, ({ one }) => ({
   }),
 }));
 
-export const contactsRelations = relations(contacts, ({ one }) => ({
-  user: one(users, {
-    fields: [contacts.userId],
-    references: [users.id],
-    relationName: 'user',
-  }),
-  contact: one(users, {
-    fields: [contacts.contactId],
-    references: [users.id],
-    relationName: 'contact',
-  }),
-}));
 
 export const groupsRelations = relations(groups, ({ one, many }) => ({
   creator: one(users, {

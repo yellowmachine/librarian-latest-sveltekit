@@ -10,6 +10,7 @@
         "postgres": "^3.4.8",
       },
       "devDependencies": {
+        "@electric-sql/pglite": "^0.3.15",
         "@eslint/compat": "^2.0.1",
         "@eslint/js": "^9.39.2",
         "@inlang/paraglide-js": "^2.9.1",
@@ -51,6 +52,8 @@
     "@auth/sveltekit": ["@auth/sveltekit@1.11.1", "", { "dependencies": { "@auth/core": "0.41.1", "set-cookie-parser": "^2.7.0" }, "peerDependencies": { "@simplewebauthn/browser": "^9.0.1", "@simplewebauthn/server": "^9.0.3", "@sveltejs/kit": "^1.0.0 || ^2.0.0", "nodemailer": "^7.0.7", "svelte": "^3.54.0 || ^4.0.0 || ^5.0.0-0" }, "optionalPeers": ["@simplewebauthn/browser", "@simplewebauthn/server", "nodemailer"] }, "sha512-cWNfXcKrNIVtJYOY1tq7H7m03j89Wg7xrTvOJALu18fZdYulzYCPIAdTw8XSEzOp6KyhOGo7tmW7VtzRNtr/8Q=="],
 
     "@drizzle-team/brocli": ["@drizzle-team/brocli@0.10.2", "", {}, "sha512-z33Il7l5dKjUgGULTqBsQBQwckHh5AbIuxhdsIxDDiZAzBOrZO6q9ogcWC65kU382AfynTfgNumVcNIjuIua6w=="],
+
+    "@electric-sql/pglite": ["@electric-sql/pglite@0.3.15", "", {}, "sha512-Cj++n1Mekf9ETfdc16TlDi+cDDQF0W7EcbyRHYOAeZdsAe8M/FJg18itDTSwyHfar2WIezawM9o0EKaRGVKygQ=="],
 
     "@emnapi/runtime": ["@emnapi/runtime@1.8.1", "", { "dependencies": { "tslib": "^2.4.0" } }, "sha512-mehfKSMWjjNol8659Z8KxEMrdSJDDot5SXMq00dM8BN4o+CLNXQ0xH2V7EchNHV4RmbZLmmPdEaXZc5H2FXmDg=="],
 

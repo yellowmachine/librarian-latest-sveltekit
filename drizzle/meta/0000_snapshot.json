@@ -1,0 +1,1400 @@
+{
+  "id": "5326af2d-2147-48c3-a628-13518085f725",
+  "prevId": "00000000-0000-0000-0000-000000000000",
+  "version": "7",
+  "dialect": "postgresql",
+  "tables": {
+    "public.book_loans": {
+      "name": "book_loans",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "book_id": {
+          "name": "book_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "requester_id": {
+          "name": "requester_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "owner_id": {
+          "name": "owner_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "status": {
+          "name": "status",
+          "type": "loan_status",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'pending'"
+        },
+        "requested_at": {
+          "name": "requested_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "responded_at": {
+          "name": "responded_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "loaned_at": {
+          "name": "loaned_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "returned_at": {
+          "name": "returned_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "notes": {
+          "name": "notes",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "book_loans_book_idx": {
+          "name": "book_loans_book_idx",
+          "columns": [
+            {
+              "expression": "book_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "book_loans_requester_idx": {
+          "name": "book_loans_requester_idx",
+          "columns": [
+            {
+              "expression": "requester_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "book_loans_owner_idx": {
+          "name": "book_loans_owner_idx",
+          "columns": [
+            {
+              "expression": "owner_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "book_loans_status_idx": {
+          "name": "book_loans_status_idx",
+          "columns": [
+            {
+              "expression": "status",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "book_loans_composite_idx": {
+          "name": "book_loans_composite_idx",
+          "columns": [
+            {
+              "expression": "requester_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "owner_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "status",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "book_loans_book_id_books_id_fk": {
+          "name": "book_loans_book_id_books_id_fk",
+          "tableFrom": "book_loans",
+          "tableTo": "books",
+          "columnsFrom": [
+            "book_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "book_loans_requester_id_users_id_fk": {
+          "name": "book_loans_requester_id_users_id_fk",
+          "tableFrom": "book_loans",
+          "tableTo": "users",
+          "columnsFrom": [
+            "requester_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "book_loans_owner_id_users_id_fk": {
+          "name": "book_loans_owner_id_users_id_fk",
+          "tableFrom": "book_loans",
+          "tableTo": "users",
+          "columnsFrom": [
+            "owner_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {
+        "book_loans_select_requester": {
+          "name": "book_loans_select_requester",
+          "as": "PERMISSIVE",
+          "for": "SELECT",
+          "to": [
+            "PUBLIC"
+          ],
+          "using": "\"book_loans\".\"requester_id\" = current_setting('app.user_id', true)::uuid"
+        },
+        "book_loans_select_owner": {
+          "name": "book_loans_select_owner",
+          "as": "PERMISSIVE",
+          "for": "SELECT",
+          "to": [
+            "PUBLIC"
+          ],
+          "using": "\"book_loans\".\"owner_id\" = current_setting('app.user_id', true)::uuid"
+        },
+        "book_loans_insert_request": {
+          "name": "book_loans_insert_request",
+          "as": "PERMISSIVE",
+          "for": "INSERT",
+          "to": [
+            "PUBLIC"
+          ],
+          "withCheck": "\n      \"book_loans\".\"requester_id\" = current_setting('app.user_id', true)::uuid AND\n      \"book_loans\".\"owner_id\" != current_setting('app.user_id', true)::uuid AND\n      \"book_loans\".\"status\" = 'pending' AND\n\n      -- Validar que el libro tenga una etiqueta compartida en un grupo común\n      \"book_loans\".\"book_id\" IN (\n        SELECT bt.book_id FROM book_tags bt\n        WHERE bt.tag_id IN (\n          SELECT sttg.tag_id FROM shared_tags_to_groups sttg\n          WHERE sttg.group_id IN (\n            SELECT ug1.group_id FROM user_groups ug1\n            WHERE ug1.user_id = current_setting('app.user_id', true)::uuid\n            INTERSECT\n            SELECT ug2.group_id FROM user_groups ug2\n            WHERE ug2.user_id = \"book_loans\".\"owner_id\"\n          )\n        )\n      ) AND\n      -- Validar que el libro sea owned y esté disponible\n      \"book_loans\".\"book_id\" IN (\n        SELECT id FROM books\n        WHERE is_owned = true AND available_for_loan = true\n      )\n    "
+        },
+        "book_loans_update_cancel": {
+          "name": "book_loans_update_cancel",
+          "as": "PERMISSIVE",
+          "for": "UPDATE",
+          "to": [
+            "PUBLIC"
+          ],
+          "using": "\n      \"book_loans\".\"requester_id\" = current_setting('app.user_id', true)::uuid AND\n      \"book_loans\".\"status\" = 'pending'\n    ",
+          "withCheck": "\"book_loans\".\"status\" = 'cancelled'"
+        },
+        "book_loans_update_owner_deny": {
+          "name": "book_loans_update_owner_deny",
+          "as": "PERMISSIVE",
+          "for": "UPDATE",
+          "to": [
+            "PUBLIC"
+          ],
+          "using": "\n      \"book_loans\".\"owner_id\" = current_setting('app.user_id', true)::uuid AND\n      \"book_loans\".\"status\" = 'pending'\n    ",
+          "withCheck": "\"book_loans\".\"status\" = 'denied'"
+        },
+        "book_loans_update_owner_approve": {
+          "name": "book_loans_update_owner_approve",
+          "as": "PERMISSIVE",
+          "for": "UPDATE",
+          "to": [
+            "PUBLIC"
+          ],
+          "using": "\n      \"book_loans\".\"owner_id\" = current_setting('app.user_id', true)::uuid AND\n      \"book_loans\".\"status\" = 'pending'\n    ",
+          "withCheck": "\"book_loans\".\"status\" = 'loaned'"
+        },
+        "book_loans_update_owner_confirm_return": {
+          "name": "book_loans_update_owner_confirm_return",
+          "as": "PERMISSIVE",
+          "for": "UPDATE",
+          "to": [
+            "PUBLIC"
+          ],
+          "using": "\n      \"book_loans\".\"owner_id\" = current_setting('app.user_id', true)::uuid AND\n      \"book_loans\".\"status\" = 'loaned'\n    ",
+          "withCheck": "\"book_loans\".\"status\" = 'returned'"
+        }
+      },
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.book_tags": {
+      "name": "book_tags",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "book_id": {
+          "name": "book_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "tag_id": {
+          "name": "tag_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "tagged_by_id": {
+          "name": "tagged_by_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "book_tags_book_idx": {
+          "name": "book_tags_book_idx",
+          "columns": [
+            {
+              "expression": "book_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "book_tags_tag_idx": {
+          "name": "book_tags_tag_idx",
+          "columns": [
+            {
+              "expression": "tag_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "book_tags_tagger_idx": {
+          "name": "book_tags_tagger_idx",
+          "columns": [
+            {
+              "expression": "tagged_by_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "book_tags_book_id_books_id_fk": {
+          "name": "book_tags_book_id_books_id_fk",
+          "tableFrom": "book_tags",
+          "tableTo": "books",
+          "columnsFrom": [
+            "book_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "book_tags_tag_id_tags_id_fk": {
+          "name": "book_tags_tag_id_tags_id_fk",
+          "tableFrom": "book_tags",
+          "tableTo": "tags",
+          "columnsFrom": [
+            "tag_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "book_tags_tagged_by_id_users_id_fk": {
+          "name": "book_tags_tagged_by_id_users_id_fk",
+          "tableFrom": "book_tags",
+          "tableTo": "users",
+          "columnsFrom": [
+            "tagged_by_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "book_tags_book_id_tag_id_tagged_by_id_unique": {
+          "name": "book_tags_book_id_tag_id_tagged_by_id_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "book_id",
+            "tag_id",
+            "tagged_by_id"
+          ]
+        }
+      },
+      "policies": {
+        "book_tags_select_own_books": {
+          "name": "book_tags_select_own_books",
+          "as": "PERMISSIVE",
+          "for": "SELECT",
+          "to": [
+            "PUBLIC"
+          ],
+          "using": "\"book_tags\".\"book_id\" IN (\n      SELECT id FROM books WHERE owner_id = current_setting('app.user_id', true)::uuid\n    )"
+        },
+        "book_tags_select_group_books": {
+          "name": "book_tags_select_group_books",
+          "as": "PERMISSIVE",
+          "for": "SELECT",
+          "to": [
+            "PUBLIC"
+          ],
+          "using": "\"book_tags\".\"book_id\" IN (\n      SELECT b.id FROM books b\n      WHERE b.owner_id IN (\n        SELECT ug.user_id FROM user_groups ug\n        WHERE ug.group_id IN (\n          SELECT group_id FROM user_groups WHERE user_id = current_setting('app.user_id', true)::uuid\n        )\n      )\n    )"
+        },
+        "book_tags_insert_own_books": {
+          "name": "book_tags_insert_own_books",
+          "as": "PERMISSIVE",
+          "for": "INSERT",
+          "to": [
+            "PUBLIC"
+          ],
+          "withCheck": "\n      \"book_tags\".\"tagged_by_id\" = current_setting('app.user_id', true)::uuid AND\n      \"book_tags\".\"book_id\" IN (SELECT id FROM books WHERE owner_id = current_setting('app.user_id', true)::uuid)\n    "
+        },
+        "book_tags_delete_own": {
+          "name": "book_tags_delete_own",
+          "as": "PERMISSIVE",
+          "for": "DELETE",
+          "to": [
+            "PUBLIC"
+          ],
+          "using": "\"book_tags\".\"tagged_by_id\" = current_setting('app.user_id', true)::uuid"
+        }
+      },
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.books": {
+      "name": "books",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "owner_id": {
+          "name": "owner_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "title": {
+          "name": "title",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "author": {
+          "name": "author",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "isbn": {
+          "name": "isbn",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "description": {
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "open_library_url": {
+          "name": "open_library_url",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "is_owned": {
+          "name": "is_owned",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": true
+        },
+        "available_for_loan": {
+          "name": "available_for_loan",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "books_owner_idx": {
+          "name": "books_owner_idx",
+          "columns": [
+            {
+              "expression": "owner_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "books_isbn_idx": {
+          "name": "books_isbn_idx",
+          "columns": [
+            {
+              "expression": "isbn",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "books_owner_id_users_id_fk": {
+          "name": "books_owner_id_users_id_fk",
+          "tableFrom": "books",
+          "tableTo": "users",
+          "columnsFrom": [
+            "owner_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {
+        "books_select_own": {
+          "name": "books_select_own",
+          "as": "PERMISSIVE",
+          "for": "SELECT",
+          "to": [
+            "PUBLIC"
+          ],
+          "using": "\"books\".\"owner_id\" = current_setting('app.user_id', true)::uuid"
+        },
+        "books_select_shared_tags": {
+          "name": "books_select_shared_tags",
+          "as": "PERMISSIVE",
+          "for": "SELECT",
+          "to": [
+            "PUBLIC"
+          ],
+          "using": "\n      \"books\".\"id\" IN (\n        SELECT bt.book_id FROM book_tags bt\n        WHERE bt.tag_id IN (\n          SELECT sttg.tag_id FROM shared_tags_to_groups sttg\n          WHERE sttg.group_id IN (\n            SELECT group_id FROM user_groups WHERE user_id = current_setting('app.user_id', true)::uuid\n          )\n        )\n      )\n    "
+        },
+        "books_insert_own": {
+          "name": "books_insert_own",
+          "as": "PERMISSIVE",
+          "for": "INSERT",
+          "to": [
+            "PUBLIC"
+          ],
+          "withCheck": "\"books\".\"owner_id\" = current_setting('app.user_id', true)::uuid"
+        },
+        "books_update_own": {
+          "name": "books_update_own",
+          "as": "PERMISSIVE",
+          "for": "UPDATE",
+          "to": [
+            "PUBLIC"
+          ],
+          "using": "\"books\".\"owner_id\" = current_setting('app.user_id', true)::uuid"
+        },
+        "books_delete_own": {
+          "name": "books_delete_own",
+          "as": "PERMISSIVE",
+          "for": "DELETE",
+          "to": [
+            "PUBLIC"
+          ],
+          "using": "\"books\".\"owner_id\" = current_setting('app.user_id', true)::uuid"
+        }
+      },
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.groups": {
+      "name": "groups",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "description": {
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_by_id": {
+          "name": "created_by_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "groups_creator_idx": {
+          "name": "groups_creator_idx",
+          "columns": [
+            {
+              "expression": "created_by_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "groups_created_by_id_users_id_fk": {
+          "name": "groups_created_by_id_users_id_fk",
+          "tableFrom": "groups",
+          "tableTo": "users",
+          "columnsFrom": [
+            "created_by_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {
+        "groups_select_member": {
+          "name": "groups_select_member",
+          "as": "PERMISSIVE",
+          "for": "SELECT",
+          "to": [
+            "PUBLIC"
+          ],
+          "using": "\"groups\".\"id\" IN (\n      SELECT group_id FROM user_groups WHERE user_id = current_setting('app.user_id', true)::uuid\n    )"
+        },
+        "groups_insert_own": {
+          "name": "groups_insert_own",
+          "as": "PERMISSIVE",
+          "for": "INSERT",
+          "to": [
+            "PUBLIC"
+          ],
+          "withCheck": "\"groups\".\"created_by_id\" = current_setting('app.user_id', true)::uuid"
+        },
+        "groups_update_creator": {
+          "name": "groups_update_creator",
+          "as": "PERMISSIVE",
+          "for": "UPDATE",
+          "to": [
+            "PUBLIC"
+          ],
+          "using": "\"groups\".\"created_by_id\" = current_setting('app.user_id', true)::uuid"
+        },
+        "groups_delete_creator": {
+          "name": "groups_delete_creator",
+          "as": "PERMISSIVE",
+          "for": "DELETE",
+          "to": [
+            "PUBLIC"
+          ],
+          "using": "\"groups\".\"created_by_id\" = current_setting('app.user_id', true)::uuid"
+        }
+      },
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.sessions": {
+      "name": "sessions",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "expires_at": {
+          "name": "expires_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "sessions_user_idx": {
+          "name": "sessions_user_idx",
+          "columns": [
+            {
+              "expression": "user_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "sessions_expires_idx": {
+          "name": "sessions_expires_idx",
+          "columns": [
+            {
+              "expression": "expires_at",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "sessions_user_id_users_id_fk": {
+          "name": "sessions_user_id_users_id_fk",
+          "tableFrom": "sessions",
+          "tableTo": "users",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {
+        "sessions_select_own": {
+          "name": "sessions_select_own",
+          "as": "PERMISSIVE",
+          "for": "SELECT",
+          "to": [
+            "PUBLIC"
+          ],
+          "using": "\"sessions\".\"user_id\" = current_setting('app.user_id', true)::uuid"
+        },
+        "sessions_delete_own": {
+          "name": "sessions_delete_own",
+          "as": "PERMISSIVE",
+          "for": "DELETE",
+          "to": [
+            "PUBLIC"
+          ],
+          "using": "\"sessions\".\"user_id\" = current_setting('app.user_id', true)::uuid"
+        }
+      },
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.shared_tags_to_groups": {
+      "name": "shared_tags_to_groups",
+      "schema": "",
+      "columns": {
+        "tag_id": {
+          "name": "tag_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "group_id": {
+          "name": "group_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "shared_by_id": {
+          "name": "shared_by_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "shared_at": {
+          "name": "shared_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "shared_tags_tag_idx": {
+          "name": "shared_tags_tag_idx",
+          "columns": [
+            {
+              "expression": "tag_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "shared_tags_group_idx": {
+          "name": "shared_tags_group_idx",
+          "columns": [
+            {
+              "expression": "group_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "shared_tags_to_groups_tag_id_tags_id_fk": {
+          "name": "shared_tags_to_groups_tag_id_tags_id_fk",
+          "tableFrom": "shared_tags_to_groups",
+          "tableTo": "tags",
+          "columnsFrom": [
+            "tag_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "shared_tags_to_groups_group_id_groups_id_fk": {
+          "name": "shared_tags_to_groups_group_id_groups_id_fk",
+          "tableFrom": "shared_tags_to_groups",
+          "tableTo": "groups",
+          "columnsFrom": [
+            "group_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "shared_tags_to_groups_shared_by_id_users_id_fk": {
+          "name": "shared_tags_to_groups_shared_by_id_users_id_fk",
+          "tableFrom": "shared_tags_to_groups",
+          "tableTo": "users",
+          "columnsFrom": [
+            "shared_by_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "shared_tags_to_groups_tag_id_group_id_pk": {
+          "name": "shared_tags_to_groups_tag_id_group_id_pk",
+          "columns": [
+            "tag_id",
+            "group_id"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "policies": {
+        "shared_tags_select_member": {
+          "name": "shared_tags_select_member",
+          "as": "PERMISSIVE",
+          "for": "SELECT",
+          "to": [
+            "PUBLIC"
+          ],
+          "using": "\"shared_tags_to_groups\".\"group_id\" IN (\n      SELECT group_id FROM user_groups WHERE user_id = current_setting('app.user_id', true)::uuid\n    )"
+        },
+        "shared_tags_insert_own": {
+          "name": "shared_tags_insert_own",
+          "as": "PERMISSIVE",
+          "for": "INSERT",
+          "to": [
+            "PUBLIC"
+          ],
+          "withCheck": "\n      \"shared_tags_to_groups\".\"shared_by_id\" = current_setting('app.user_id', true)::uuid AND\n      \"shared_tags_to_groups\".\"tag_id\" IN (SELECT id FROM tags WHERE created_by_id = current_setting('app.user_id', true)::uuid) AND\n      \"shared_tags_to_groups\".\"group_id\" IN (SELECT group_id FROM user_groups WHERE user_id = current_setting('app.user_id', true)::uuid)\n    "
+        },
+        "shared_tags_delete_own": {
+          "name": "shared_tags_delete_own",
+          "as": "PERMISSIVE",
+          "for": "DELETE",
+          "to": [
+            "PUBLIC"
+          ],
+          "using": "\"shared_tags_to_groups\".\"shared_by_id\" = current_setting('app.user_id', true)::uuid"
+        }
+      },
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.tags": {
+      "name": "tags",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_by_id": {
+          "name": "created_by_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "tags_creator_idx": {
+          "name": "tags_creator_idx",
+          "columns": [
+            {
+              "expression": "created_by_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "tags_name_creator_idx": {
+          "name": "tags_name_creator_idx",
+          "columns": [
+            {
+              "expression": "name",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "created_by_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "tags_created_by_id_users_id_fk": {
+          "name": "tags_created_by_id_users_id_fk",
+          "tableFrom": "tags",
+          "tableTo": "users",
+          "columnsFrom": [
+            "created_by_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {
+        "tags_select_own": {
+          "name": "tags_select_own",
+          "as": "PERMISSIVE",
+          "for": "SELECT",
+          "to": [
+            "PUBLIC"
+          ],
+          "using": "\"tags\".\"created_by_id\" = current_setting('app.user_id', true)::uuid"
+        },
+        "tags_select_shared": {
+          "name": "tags_select_shared",
+          "as": "PERMISSIVE",
+          "for": "SELECT",
+          "to": [
+            "PUBLIC"
+          ],
+          "using": "\"tags\".\"id\" IN (\n      SELECT tag_id FROM shared_tags_to_groups\n      WHERE group_id IN (\n        SELECT group_id FROM user_groups WHERE user_id = current_setting('app.user_id', true)::uuid\n      )\n    )"
+        },
+        "tags_insert_own": {
+          "name": "tags_insert_own",
+          "as": "PERMISSIVE",
+          "for": "INSERT",
+          "to": [
+            "PUBLIC"
+          ],
+          "withCheck": "\"tags\".\"created_by_id\" = current_setting('app.user_id', true)::uuid"
+        },
+        "tags_update_own": {
+          "name": "tags_update_own",
+          "as": "PERMISSIVE",
+          "for": "UPDATE",
+          "to": [
+            "PUBLIC"
+          ],
+          "using": "\"tags\".\"created_by_id\" = current_setting('app.user_id', true)::uuid"
+        },
+        "tags_delete_own": {
+          "name": "tags_delete_own",
+          "as": "PERMISSIVE",
+          "for": "DELETE",
+          "to": [
+            "PUBLIC"
+          ],
+          "using": "\"tags\".\"created_by_id\" = current_setting('app.user_id', true)::uuid"
+        }
+      },
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.user_groups": {
+      "name": "user_groups",
+      "schema": "",
+      "columns": {
+        "user_id": {
+          "name": "user_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "group_id": {
+          "name": "group_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "joined_at": {
+          "name": "joined_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "user_groups_user_idx": {
+          "name": "user_groups_user_idx",
+          "columns": [
+            {
+              "expression": "user_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "user_groups_group_idx": {
+          "name": "user_groups_group_idx",
+          "columns": [
+            {
+              "expression": "group_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "user_groups_user_id_users_id_fk": {
+          "name": "user_groups_user_id_users_id_fk",
+          "tableFrom": "user_groups",
+          "tableTo": "users",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "user_groups_group_id_groups_id_fk": {
+          "name": "user_groups_group_id_groups_id_fk",
+          "tableFrom": "user_groups",
+          "tableTo": "groups",
+          "columnsFrom": [
+            "group_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "user_groups_user_id_group_id_pk": {
+          "name": "user_groups_user_id_group_id_pk",
+          "columns": [
+            "user_id",
+            "group_id"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "policies": {
+        "user_groups_select_member": {
+          "name": "user_groups_select_member",
+          "as": "PERMISSIVE",
+          "for": "SELECT",
+          "to": [
+            "PUBLIC"
+          ],
+          "using": "\"user_groups\".\"group_id\" IN (\n      SELECT group_id FROM user_groups WHERE user_id = current_setting('app.user_id', true)::uuid\n    )"
+        },
+        "user_groups_insert_creator": {
+          "name": "user_groups_insert_creator",
+          "as": "PERMISSIVE",
+          "for": "INSERT",
+          "to": [
+            "PUBLIC"
+          ],
+          "withCheck": "\"user_groups\".\"group_id\" IN (\n      SELECT id FROM groups WHERE created_by_id = current_setting('app.user_id', true)::uuid\n    )"
+        },
+        "user_groups_delete_self": {
+          "name": "user_groups_delete_self",
+          "as": "PERMISSIVE",
+          "for": "DELETE",
+          "to": [
+            "PUBLIC"
+          ],
+          "using": "\"user_groups\".\"user_id\" = current_setting('app.user_id', true)::uuid"
+        },
+        "user_groups_delete_creator": {
+          "name": "user_groups_delete_creator",
+          "as": "PERMISSIVE",
+          "for": "DELETE",
+          "to": [
+            "PUBLIC"
+          ],
+          "using": "\"user_groups\".\"group_id\" IN (\n      SELECT id FROM groups WHERE created_by_id = current_setting('app.user_id', true)::uuid\n    )"
+        }
+      },
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.users": {
+      "name": "users",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "email": {
+          "name": "email",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "nick": {
+          "name": "nick",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "password_hash": {
+          "name": "password_hash",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "users_email_unique": {
+          "name": "users_email_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "email"
+          ]
+        },
+        "users_nick_unique": {
+          "name": "users_nick_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "nick"
+          ]
+        }
+      },
+      "policies": {
+        "users_select_all": {
+          "name": "users_select_all",
+          "as": "PERMISSIVE",
+          "for": "SELECT",
+          "to": [
+            "PUBLIC"
+          ],
+          "using": "true"
+        },
+        "users_update_own": {
+          "name": "users_update_own",
+          "as": "PERMISSIVE",
+          "for": "UPDATE",
+          "to": [
+            "PUBLIC"
+          ],
+          "using": "current_setting('app.user_id', true)::uuid = \"users\".\"id\""
+        }
+      },
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    }
+  },
+  "enums": {
+    "public.loan_status": {
+      "name": "loan_status",
+      "schema": "public",
+      "values": [
+        "pending",
+        "cancelled",
+        "denied",
+        "loaned",
+        "returned"
+      ]
+    }
+  },
+  "schemas": {},
+  "sequences": {},
+  "roles": {},
+  "policies": {},
+  "views": {},
+  "_meta": {
+    "columns": {},
+    "schemas": {},
+    "tables": {}
+  }
+}
